@@ -578,9 +578,13 @@ final class StorageBridge: NSObject, FlutterPlugin, FlutterStreamHandler,
 
   private func present(_ picker: UIViewController) {
     DispatchQueue.main.async {
-      guard let root = UIApplication.shared.connectedScenes
-        .compactMap({ ($0 as? UIWindowScene)?.keyWindow })
-        .first?.rootViewController else { return }
+      // `keyWindow` on UIWindowScene is iOS 15+, deployment target is 14.
+      guard let scene = UIApplication.shared.connectedScenes
+        .compactMap({ $0 as? UIWindowScene })
+        .first,
+        let window = scene.windows.first(where: { $0.isKeyWindow })
+          ?? scene.windows.first,
+        let root = window.rootViewController else { return }
       var top = root
       while let presented = top.presentedViewController {
         top = presented
