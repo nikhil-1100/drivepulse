@@ -121,6 +121,7 @@ class AppState extends ChangeNotifier {
   }
 
   void _emitNotice(String message) {
+    if (!settings.alertsEnabled) return;
     _notice = message;
     noticeFeed.value = message;
   }
@@ -529,6 +530,12 @@ class AppState extends ChangeNotifier {
     required String password,
     required Volume volume,
   }) async {
+    if (volume.fileSystem.toUpperCase() == 'SAF') {
+      throw const StorageException(
+        'Encryption needs direct file access. Use internal storage or a mounted '
+        'volume, or grant the drive as a mounted volume.',
+      );
+    }
     final List<FileEntry> files =
         entries.where((FileEntry e) => !e.isDirectory).toList(growable: false);
     if (files.isEmpty) {

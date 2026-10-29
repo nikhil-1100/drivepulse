@@ -245,6 +245,21 @@ class _DashboardScreenState extends State<DashboardScreen> {
                     ),
                     const SizedBox(height: Insets.md),
                   ],
+                  if (active != null &&
+                      active.isConnected &&
+                      active.totalBytes > 0 &&
+                      active.freeFraction * 100 <= app.settings.lowStoragePercent) ...<Widget>[
+                    InfoBanner(
+                      message:
+                          '${active.label} is low on space: ${ByteFormat.format(active.freeBytes)} left '
+                          '(below the ${app.settings.lowStoragePercent}% threshold).',
+                      icon: Icons.warning_amber_rounded,
+                      tone: BannerTone.warning,
+                      actionLabel: 'Clean up',
+                      onAction: () => AppRoutes.cleanup(context, volume: active),
+                    ),
+                    const SizedBox(height: Insets.md),
+                  ],
                   if (app.error != null) ...<Widget>[
                     InfoBanner(
                       message: app.error!,

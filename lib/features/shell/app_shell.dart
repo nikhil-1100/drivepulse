@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 
 import '../../core/theme/app_colors.dart';
@@ -51,6 +52,9 @@ class _AppShellState extends State<AppShell> {
   }
 
   void _select(int index) {
+    if (context.read<SettingsController>().haptics) {
+      HapticFeedback.selectionClick();
+    }
     setState(() {
       _index = index;
       _navVisible = true;

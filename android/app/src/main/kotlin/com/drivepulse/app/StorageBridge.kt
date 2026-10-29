@@ -894,8 +894,13 @@ class StorageBridge(
     private fun documentFor(path: String): DocumentFile? {
         return try {
             val uri = Uri.parse(path)
-            DocumentFile.fromSingleUri(activity, uri)
-                ?: DocumentFile.fromTreeUri(activity, uri)
+            if (path.contains("/tree/")) {
+                DocumentFile.fromTreeUri(activity, uri)
+                    ?: DocumentFile.fromSingleUri(activity, uri)
+            } else {
+                DocumentFile.fromSingleUri(activity, uri)
+                    ?: DocumentFile.fromTreeUri(activity, uri)
+            }
         } catch (_: Exception) {
             null
         }

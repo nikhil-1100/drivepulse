@@ -545,17 +545,24 @@ class _BrowseScreenState extends State<BrowseScreen> {
       0,
       (int sum, FileEntry e) => sum + (e.isDirectory ? 0 : e.sizeBytes),
     );
-    final bool confirmed = await showConfirmDialog(
-      context,
-      title: entries.length == 1 ? 'Delete this item?' : 'Delete ${entries.length} items?',
-      message:
-          'This permanently removes ${entries.length == 1 ? '“${entries.first.name}”' : 'the selected items'}'
-          '${bytes > 0 ? ' (${ByteFormat.format(bytes)})' : ''} from ${volume.label}. '
-          'This cannot be undone.',
-      confirmLabel: 'Delete',
-      destructive: true,
-      icon: Icons.delete_outline_rounded,
-    );
+    final bool needsConfirm =
+        context.read<SettingsController>().confirmDestructive;
+    bool confirmed = true;
+    if (needsConfirm) {
+      confirmed = await showConfirmDialog(
+        context,
+        title: entries.length == 1
+            ? 'Delete this item?'
+            : 'Delete ${entries.length} items?',
+        message:
+            'This permanently removes ${entries.length == 1 ? '“${entries.first.name}”' : 'the selected items'}'
+            '${bytes > 0 ? ' (${ByteFormat.format(bytes)})' : ''} from ${volume.label}. '
+            'This cannot be undone.',
+        confirmLabel: 'Delete',
+        destructive: true,
+        icon: Icons.delete_outline_rounded,
+      );
+    }
     if (!confirmed || !mounted) return;
     try {
       await _app.deleteEntries(entries: entries, volume: volume);

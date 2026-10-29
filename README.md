@@ -158,7 +158,7 @@ Coverage includes byte formatting, extension classification, the storage analyze
 | Format a drive | No — OS-only, explained in-app | No |
 | Forcible unmount | No — OS-only; DrivePulse flushes handles and guides the user | No |
 | S.M.A.R.T. health | Not exposed to apps; local benchmark used | Not exposed |
-| Encryption | Yes, files up to 128 MB in memory per file | Same |
+| Encryption | Yes on directly mounted volumes, files up to 128 MB; SAF folders are excluded and say why | Yes inside authorised folders, up to 128 MB |
 
 These are platform constraints, not missing screens. The UI states them where they matter.
 
@@ -176,6 +176,10 @@ These are platform constraints, not missing screens. The UI states them where th
 - Chunked streaming encryption above 128 MB
 - Optional desktop targets (macOS/Windows) using the same `StorageService` contract
 - Localisation (the copy layer is already centralised)
+
+## Privacy
+
+See [`docs/PRIVACY.md`](docs/PRIVACY.md). Short version: no account, no telemetry, no network permission, file data never leaves the device.
 
 ## Licence
 

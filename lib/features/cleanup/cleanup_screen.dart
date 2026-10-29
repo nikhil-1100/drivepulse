@@ -19,6 +19,7 @@ import '../../data/models/clean_up_report.dart';
 import '../../data/models/file_entry.dart';
 import '../../data/models/storage_breakdown.dart';
 import '../../data/models/volume.dart';
+import '../../data/services/settings_store.dart';
 import '../../data/state/app_state.dart';
 
 class CleanupScreen extends StatefulWidget {
@@ -78,17 +79,20 @@ class _CleanupScreenState extends State<CleanupScreen> {
       0,
       (int sum, FileEntry e) => sum + (e.isDirectory ? 0 : e.sizeBytes),
     );
-    final bool confirmed = await showConfirmDialog(
-      context,
-      title: actionLabel,
-      message:
-          '$message\n\n${entries.length} item${entries.length == 1 ? '' : 's'}'
-          '${bytes > 0 ? ' • ${ByteFormat.format(bytes)}' : ''}. '
-          'This cannot be undone.',
-      confirmLabel: 'Delete',
-      destructive: true,
-      icon: Icons.delete_sweep_outlined,
-    );
+    bool confirmed = true;
+    if (context.read<SettingsController>().confirmDestructive) {
+      confirmed = await showConfirmDialog(
+        context,
+        title: actionLabel,
+        message:
+            '$message\n\n${entries.length} item${entries.length == 1 ? '' : 's'}'
+            '${bytes > 0 ? ' • ${ByteFormat.format(bytes)}' : ''}. '
+            'This cannot be undone.',
+        confirmLabel: 'Delete',
+        destructive: true,
+        icon: Icons.delete_sweep_outlined,
+      );
+    }
     if (!confirmed || !mounted) return;
     try {
       await _app.deleteFromCleanup(entries: entries, volume: volume);
